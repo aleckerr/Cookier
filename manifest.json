@@ -1,0 +1,18 @@
+
+{
+	"manifest_version": 2,
+
+	"name": "Cookier",
+  	"version": "1.0",
+
+  	"description": "A simple cookie management chrome extension",
+  	"browser_action": {
+    	"default_icon": "images/cookier.png",
+    	"default_popup": "html/cookier.html"
+  	},
+  	"permissions": [
+  		"cookies",
+        "http://*/*",
+        "https://*/*"
+  	]
+}
