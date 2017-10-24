@@ -6,21 +6,29 @@ function getAllCookies(){
 			//console.log(all_cookies[cookie].domain);
 			//console.log(cookieArray.length);
 		}
-		/*The below loop creates and input checkbox with the id "cookie" + index
-		of cookie. It then creates a label with a text node containing the cookie's
-		domain. Each iteration appends a new checkbox with appropriate ID, followed
-		by a relevant label, followed by a line break to the "presentCookieCheckList*/
+		/*The below loop creates input checkboxes with the 'id' of each being the domain
+		of the cookie followed buy "_num:" + index. Example: docs.google.com_num:1. The
+		'value' of each checkbox is the full URL of the cookie. It then creates a label 
+		with a text node containing the cookie's domain. Each iteration appends a new 
+		checkbox with appropriate id/value, followed by a relevant label, followed by a 
+		line break to the "presentCookieCheckList".
+
+		Each checkbox element has an 'id' paramater set to the full url of the cookie*/
 		for(var i in cookieArray){
 
+			//checkbox
+			var cookieURL = chrome.runtime.getURL(cookieArray[i].domain);
 			var ele = document.createElement("input");
 			ele.setAttribute('type','checkbox');
-			ele.setAttribute('id',"cookie" + i);
-			ele.setAttribute('value',i);
+			ele.setAttribute('id',cookieArray[i].domain + "_num:"+i);
+			ele.setAttribute('value',cookieURL);
 
+			//label
 			var label = document.createElement("label");
-			label.setAttribute('for',"cookie" + i);
-			label.appendChild(document.createTextNode(cookieArray[i].domain));
+			label.setAttribute('for',cookieArray[i].domain + "_num:"+i);//finds cookie based on ID^
+			label.appendChild(document.createTextNode(cookieArray[i].domain));//display the domain
 
+			//linebreak
 			var lineBreak = document.createElement("br");
 
 			document.getElementById("presentCookieCheckList").appendChild(ele);
@@ -28,40 +36,45 @@ function getAllCookies(){
 			document.getElementById("presentCookieCheckList").appendChild(lineBreak);
 		}
 	});
-	//document.getElementById("output1").innerHTML = cookieArray[3].domain;
-	//return cookieArray;
 }
-
 getAllCookies();
 
+
+
+var whiteListArray = [];
 function buildWhiteList(){
-	console.log("buttonWorked");
+	var selectedCookies = document.getElementById('cookieForm');
+	for(var i = 0; i < selectedCookies.length; i++){
+		var ele = document.getElementById(selectedCookies.elements[i].id);
+		if(ele.checked){
+			whiteListArray[i] = ele.value;
+			//console.log(selectedCookies.elements[i]);
+		}
+	}
+	//console.log(whiteListArray);
+
+	/*At this point in execution, I now have a white list containing the URLS
+	of any cookie that the user does not want destroyed*/
 }
-//console.log("HEY!!" + getAllCookies()[1].domain);
 
-//buildWhiteList();
+document.addEventListener('DOMContentLoaded', function(){
+	var button = document.getElementById('appendWhiteList');
+	if(button){//probably unnesecary 
+		button.addEventListener('click', buildWhiteList)
+	}
+});
 
-
-
-
-
-
-
-
-
-
+function displayWhite(){
+	console.log(whiteListArray);
+}
 
 
-
-
-
-
-
-
-
-
-
-
+document.addEventListener('DOMContentLoaded', function(){
+	var button1 = document.getElementById('console');
+	if(button1){//probably unnesecary 
+		button1.addEventListener('click', displayWhite)
+	}
+});
 
 
 /*The idea is to have a extension which constantly delets any cookie
@@ -88,4 +101,31 @@ site (loging in or whatever), and whitelist the cookie. They can then resume des
 One potential issue I see is whitelisting specific cookies which will eventually
 become irrevelvant. Idk if login cookies and such work like that, but when I'm actually
 destroying cookies, I could base it off of domain so that, for example, nothing from
-login.website.com is ever destroyed.*/
+login.website.com is ever destroyed.
+
+_____________________________1
+Issue #1:
+datamation.com left two identical cookies, how to remove?
+
+Surveymonkey left 5 cookies. selecting 1 did nothing, selecting 2 added all 5 to my
+white list. I'm noticing that the first 4 cookies are associated with a label which has
+the ID of the 5th one.
+
+Solution #1:
+I now set each checkbox 'id' to also include a unique number, and se the checkbox
+'value' to include the full URL. THIS WAY: some urls may be doubly added to the whitelist,
+but no cookie will fail to be added. Additionally, since I don't group domains together,
+if the cookies actually do happen to be different and the user wants to be very spefic, 
+they cab do so.
+
+I may need to change the white list to be populated with the non-index appended domain for 
+better removal down the road
+_______________________________1
+
+_______________________________2
+
+_______________________________2
+
+
+
+*/
