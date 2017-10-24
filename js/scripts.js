@@ -41,6 +41,35 @@ getAllCookies();
 
 
 
+function resumeDestroy(){
+	destructionVar = setInterval(destroy, 1 * 60 * 1000);//1 minute timer
+	function destroy(){
+		
+	}
+}
+
+
+document.addEventListener('DOMContentLoaded', function(){
+	var button0 = document.getElementById('destroy');
+	if(button0){//probably unnesecary 
+		button0.addEventListener('click', resumeDestroy)
+	}
+});
+
+
+function stopDestroy(){
+	clearInterval(destructionVar);
+}
+
+
+document.addEventListener('DOMContentLoaded', function(){
+	var button1 = document.getElementById('stopdestroy');
+	if(button1){//probably unnesecary 
+		button1.addEventListener('click', stopDestroy)
+	}
+});
+
+
 var whiteListArray = [];
 function buildWhiteList(){
 	var selectedCookies = document.getElementById('cookieForm');
@@ -58,23 +87,13 @@ function buildWhiteList(){
 }
 
 document.addEventListener('DOMContentLoaded', function(){
-	var button = document.getElementById('appendWhiteList');
-	if(button){//probably unnesecary 
-		button.addEventListener('click', buildWhiteList)
+	var button2 = document.getElementById('appendWhiteList');
+	if(button2){//probably unnesecary 
+		button2.addEventListener('click', buildWhiteList)
 	}
 });
 
-function displayWhite(){
-	console.log(whiteListArray);
-}
 
-
-document.addEventListener('DOMContentLoaded', function(){
-	var button1 = document.getElementById('console');
-	if(button1){//probably unnesecary 
-		button1.addEventListener('click', displayWhite)
-	}
-});
 
 
 /*The idea is to have a extension which constantly delets any cookie

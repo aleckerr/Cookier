@@ -2,7 +2,7 @@ body {
 	/*margin-left:70%;
 	margin-right:70%;*/
 	height: 500px;
-	width: 300px;
+	width: 325px;
 	margin-top:3px;
 	margin-bottom:15px;
 	background-color:#ffb380;
@@ -18,7 +18,10 @@ body {
 #presentCookieCheckList {
 	border:2px solid #ccc;
 	background-color:#FDFEFE;
-	width:300px;
+	width:320px;
 	height: 150px;
 	overflow-y: scroll;
+}
+#appendWhiteList {
+	margin-top: 5px;
 }
