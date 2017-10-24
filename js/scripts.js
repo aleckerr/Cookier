@@ -47,11 +47,15 @@ function resumeDestroy(){
 		console.log("in destroy");
 		chrome.cookies.getAll({}, function(cookies){
 		for(var c in cookies){
-			var URL = chrome.runtime.getURL(cookies[c].domain);
-			console.log("in loop");
-			if(!(whiteListArray.includes(URL))){
-				console.log("Removing: " + URL);
-				chrome.cookies.remove({"url": URL, "name":cookies[c].name});
+			var arrayURL = chrome.runtime.getURL(cookies[c].domain);
+			console.log(cookies[c].domain);
+			if(!(whiteListArray.includes(arrayURL))){
+				var fullURL = "http" + (cookies[c].secure ? "s" : "") + "://" + 
+					cookies[c].domain + cookies[c].path;
+
+				chrome.cookies.remove({"url": fullURL, "name":cookies[c].name});
+
+				console.log("Removed: " + arrayURL);
 			}
 		}
 		});
