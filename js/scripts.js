@@ -1,5 +1,5 @@
-var cookieArray = [];
 function getAllCookies(){
+	var cookieArray = [];
 	chrome.cookies.getAll({}, function(all_cookies){
 		for(var cookie in all_cookies){
 			cookieArray[cookie] = (all_cookies[cookie]);
@@ -32,14 +32,15 @@ function getAllCookies(){
 	//return cookieArray;
 }
 
-function buildWhiteList(){
-	if(cookieArray.length !=0){
-		document.getElementById("output1").innerHTML = cookieArray[3].domain;
-	}
-}
 getAllCookies();
-buildWhiteList();
-//document.getElementById("output1").innerHTML = cookieArray[3].domain;
+
+function buildWhiteList(){
+	console.log("buttonWorked");
+}
+//console.log("HEY!!" + getAllCookies()[1].domain);
+
+//buildWhiteList();
+
 
 
 

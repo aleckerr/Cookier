@@ -7,13 +7,20 @@
 	</head>
 	<body>
 		<script id="scripts" type="text/javascript" src="../js/scripts.js"></script>
-		<p id="output1"></p>
+		<p id="output1"></p> <!-- This is just for testing -->
 
 		<h1 id="banner">Cookier</h1>
 		<h3 id="presentCookieCheckListLabel">Select which cookies you wish to whitelist:</h3>
-
-		<div id="presentCookieCheckList">
+		
+		<form id="cookieForm">
+			<div id="presentCookieCheckList">
 			<!-- List of cookies added from script -->
-		</div>
+			</div>
+			<!-- <input type="submit" value="Append Whitelist"> -->
+		</form>
+		<button onclick ="scripts.buildWhiteList()">Append Whitelist</button>
+		<!-- <div id="whiteListButton">
+			
+		</div> -->
 	</body>
 </html>
