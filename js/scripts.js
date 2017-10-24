@@ -42,10 +42,21 @@ getAllCookies();
 
 
 function resumeDestroy(){
-	destructionVar = setInterval(destroy, 1 * 60 * 1000);//1 minute timer
+	destroy();
 	function destroy(){
-		
+		console.log("in destroy");
+		chrome.cookies.getAll({}, function(cookies){
+		for(var c in cookies){
+			var URL = chrome.runtime.getURL(cookies[c].domain);
+			console.log("in loop");
+			if(!(whiteListArray.includes(URL))){
+				console.log("Removing: " + URL);
+				chrome.cookies.remove({"url": URL, "name":cookies[c].name});
+			}
+		}
+		});
 	}
+	destructionVar = setInterval(destroy, 15 * 1000/*1 * 60 * 1000*/);//1 minute timer
 }
 
 
@@ -77,10 +88,9 @@ function buildWhiteList(){
 		var ele = document.getElementById(selectedCookies.elements[i].id);
 		if(ele.checked){
 			whiteListArray[i] = ele.value;
-			//console.log(selectedCookies.elements[i]);
 		}
 	}
-	//console.log(whiteListArray);
+	console.log(whiteListArray);
 
 	/*At this point in execution, I now have a white list containing the URLS
 	of any cookie that the user does not want destroyed*/

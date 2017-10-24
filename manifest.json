@@ -10,9 +10,17 @@
     	"default_icon": "images/cookier.png",
     	"default_popup": "html/cookier.html"
   	},
+    "content_scripts": [
+      {
+        "matches": ["http://*/*", "https://*/*"],
+        "js": ["/js/scripts.js"]
+      }
+    ],
   	"permissions": [
+      "tabs",
   		"cookies",
-        "http://*/*",
-        "https://*/*"
+      "http://*/*",
+      "https://*/*",
+      "*://*.example.com/*"
   	]
 }
