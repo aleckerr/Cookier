@@ -241,6 +241,8 @@ What I need to do next:
 
 -Implelment a checkbox list to display the whitelist
 
+-Add a boolean to not add whitlisted cookies to the main list
+
 -Add a button to remove from whitelist
 
 -stylize with css
