@@ -1,3 +1,4 @@
+//function to display the active cookie list
 function getAllCookies(){
 	var cookieArray = [];
 	chrome.cookies.getAll({}, function(all_cookies){
@@ -40,7 +41,7 @@ function getAllCookies(){
 getAllCookies();
 
 
-
+/****************destroy handlers*************************************/
 function resumeDestroy(){
 	destroy();
 	function destroy(){
@@ -70,8 +71,11 @@ document.addEventListener('DOMContentLoaded', function(){
 		button0.addEventListener('click', resumeDestroy)
 	}
 });
+/******************************************************/
 
 
+
+/*********************stop destroy handlers********************************/
 function stopDestroy(){
 	clearInterval(destructionVar);
 }
@@ -83,8 +87,11 @@ document.addEventListener('DOMContentLoaded', function(){
 		button1.addEventListener('click', stopDestroy)
 	}
 });
+/*****************************************************/
 
 
+
+/**********************white list handlers *******************************/
 var whiteListArray = [];
 function buildWhiteList(){
 	var selectedCookies = document.getElementById('cookieForm');
@@ -106,6 +113,10 @@ document.addEventListener('DOMContentLoaded', function(){
 		button2.addEventListener('click', buildWhiteList)
 	}
 });
+/*****************************************************/
+
+
+
 
 
 
@@ -136,6 +147,14 @@ become irrevelvant. Idk if login cookies and such work like that, but when I'm a
 destroying cookies, I could base it off of domain so that, for example, nothing from
 login.website.com is ever destroyed.
 
+
+
+potentially base this off of chrome's own cookie settings.
+
+/Users/aleckerr/Library/Application Support/Google/Chrome/Default/Preferences(txt)
+contains a file which has a line "block_third_party_cookies: false". Use this to 
+turn on and off cookies, allowing us to easily update the "allow" list with the api
+
 _____________________________1
 Issue #1:
 datamation.com left two identical cookies, how to remove?
@@ -156,6 +175,14 @@ better removal down the road
 _______________________________1
 
 _______________________________2
+Issue #2:
+
+Certain cookies do not want to be earased sometimes. Even on click and clean, they
+presist after not failing an api call to remove them. one example is:
+
+https://nexus-long-poller-b.intercom.io/
+
+I also noticed this with www.alluc.ee, but on my laptop these cookeis cleared fine
 
 _______________________________2
 
