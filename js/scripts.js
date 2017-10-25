@@ -71,6 +71,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 function allowCookies(){
 		chrome.contentSettings.cookies.set({primaryPattern: '<all_urls>', setting: 'allow'});
+		console.log('Just allowed all cookies.');
 }
 
 
@@ -81,6 +82,23 @@ document.addEventListener('DOMContentLoaded', function(){
 	}
 });
 /*******************************************************/
+
+/********************Block Cookies Code****************/
+
+function blockCookies(){
+		chrome.contentSettings.cookies.set({primaryPattern: '<all_urls>', setting: "block"});
+		console.log('Just blocked all cookies.');
+}
+
+
+document.addEventListener('DOMContentLoaded', function(){
+	var button4 = document.getElementById('blockCookies');
+	if(button4){//probably unnesecary 
+		button4.addEventListener('click', blockCookies)
+	}
+});
+/*******************************************************/
+
 
 
 /*blow code block removes all cookies on a timer. It is no longer nessecary*/
@@ -203,7 +221,47 @@ https://nexus-long-poller-b.intercom.io/
 
 I also noticed this with www.alluc.ee, but on my laptop these cookeis cleared fine
 
+Solution 2:
+IDK about that nexus url, its weird. I think websites must always leave a cookie,
+but not one that they can store data on. When I earase and refresh my cookie list
+I can still see my cookies, they just seem to have no associated data.
+
+I now have the contentSettings wroking. They set the allow and block buttons to 
+allow or block all cookies/cookie data from being set on the browser. I have verified
+this using click&clean and the chrome://settings/content/cookies with alluc.ee and 
+youtube.com
+
+What I need to do next:
+
+-Add a delete button to delete any nonwhitelisted/nonchecked cookies
+
+-figure out how to manage the array of cookies (what element to. store) and
+	make sure whitelist is only adding single cookies if possible,
+	or decide on domains and if so, how to group them.
+
+-Implelment a checkbox list to display the whitelist
+
+-Add a button to remove from whitelist
+
+-stylize with css
 _______________________________2
+
+
+
+______________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
