@@ -41,54 +41,6 @@ function getAllCookies(){
 getAllCookies();
 
 
-/****************destroy handlers*************************************/
-function resumeDestroy(){
-	destroy();
-	function destroy(){
-		console.log("in destroy");
-		chrome.cookies.getAll({}, function(cookies){
-		for(var c in cookies){
-			var arrayURL = chrome.runtime.getURL(cookies[c].domain);
-			console.log(cookies[c].domain);
-			if(!(whiteListArray.includes(arrayURL))){
-				var fullURL = "http" + (cookies[c].secure ? "s" : "") + "://" + 
-					cookies[c].domain + cookies[c].path;
-
-				chrome.cookies.remove({"url": fullURL, "name":cookies[c].name});
-
-				console.log("Removed: " + arrayURL);
-			}
-		}
-		});
-	}
-	destructionVar = setInterval(destroy, 15 * 1000/*1 * 60 * 1000*/);//1 minute timer
-}
-
-
-document.addEventListener('DOMContentLoaded', function(){
-	var button0 = document.getElementById('destroy');
-	if(button0){//probably unnesecary 
-		button0.addEventListener('click', resumeDestroy)
-	}
-});
-/******************************************************/
-
-
-
-/*********************stop destroy handlers********************************/
-function stopDestroy(){
-	clearInterval(destructionVar);
-}
-
-
-document.addEventListener('DOMContentLoaded', function(){
-	var button1 = document.getElementById('stopdestroy');
-	if(button1){//probably unnesecary 
-		button1.addEventListener('click', stopDestroy)
-	}
-});
-/*****************************************************/
-
 
 
 /**********************white list handlers *******************************/
@@ -113,7 +65,74 @@ document.addEventListener('DOMContentLoaded', function(){
 		button2.addEventListener('click', buildWhiteList)
 	}
 });
+/***********************************************************************/
+
+/********************Don't Block Cookies Code****************/
+
+function allowCookies(){
+		chrome.contentSettings.cookies.set({primaryPattern: '<all_urls>', setting: 'allow'});
+}
+
+
+document.addEventListener('DOMContentLoaded', function(){
+	var button3 = document.getElementById('allowCookies');
+	if(button3){//probably unnesecary 
+		button3.addEventListener('click', allowCookies)
+	}
+});
+/*******************************************************/
+
+
+/*blow code block removes all cookies on a timer. It is no longer nessecary*/
+/****************destroy handlers*************************************
+function resumeDestroy(){
+	destroy();
+	function destroy(){
+		console.log("in destroy");
+		chrome.cookies.getAll({}, function(cookies){
+		for(var c in cookies){
+			var arrayURL = chrome.runtime.getURL(cookies[c].domain);
+			console.log(cookies[c].domain);
+			if(!(whiteListArray.includes(arrayURL))){
+				var fullURL = "http" + (cookies[c].secure ? "s" : "") + "://" + 
+					cookies[c].domain + cookies[c].path;
+
+				chrome.cookies.remove({"url": fullURL, "name":cookies[c].name});
+
+				console.log("Removed: " + arrayURL);
+			}
+		}
+		});
+	}
+	destructionVar = setInterval(destroy, 15 * 1000);//15 second timer
+}
+
+
+document.addEventListener('DOMContentLoaded', function(){
+	var button0 = document.getElementById('destroy');
+	if(button0){//probably unnesecary 
+		button0.addEventListener('click', resumeDestroy)
+	}
+});
+/******************************************************/
+
+
+
+/*********************stop destroy handlers********************************
+function stopDestroy(){
+	clearInterval(destructionVar);
+}
+
+
+document.addEventListener('DOMContentLoaded', function(){
+	var button1 = document.getElementById('stopdestroy');
+	if(button1){//probably unnesecary 
+		button1.addEventListener('click', stopDestroy)
+	}
+});
 /*****************************************************/
+
+
 
 
 

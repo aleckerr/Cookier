@@ -19,6 +19,7 @@
   	"permissions": [
       "tabs",
   		"cookies",
+      "contentSettings",
       "http://*/*",
       "https://*/*",
       "*://*.example.com/*"
