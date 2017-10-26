@@ -1,5 +1,6 @@
 //function to display the active cookie list
-function getAllCookies(){
+var addedDomains = [];
+function activeCookieList(){
 	var cookieArray = [];
 	chrome.cookies.getAll({}, function(all_cookies){
 		for(var cookie in all_cookies){
@@ -9,54 +10,110 @@ function getAllCookies(){
 		}
 		/*The below loop creates input checkboxes with the 'id' of each being the domain
 		of the cookie followed buy "_num:" + index. Example: docs.google.com_num:1. The
-		'value' of each checkbox is the full URL of the cookie. It then creates a label 
+		'name' of each checkbox is the domain of the cookie. It then creates a label 
 		with a text node containing the cookie's domain. Each iteration appends a new 
-		checkbox with appropriate id/value, followed by a relevant label, followed by a 
+		checkbox with appropriate id/name, followed by a relevant label, followed by a 
 		line break to the "presentCookieCheckList".
 
-		Each checkbox element has an 'id' paramater set to the full url of the cookie*/
+		There is a boolean check in the loop such that no no domain is added twice and
+		no cookie in the whitelist is displayed in the cookies list. Using both the ID
+		and name is unnescary, but it may come in handy if I ever need to get more
+		specific with the cookies.
+
+		The value of the each checkbox is either "" or "s" depending on if the cookie
+		uses http or https.
+		*/
+		//var addedDomains = [];
+		var list = document.getElementById("presentCookieCheckList");
+
 		for(var i in cookieArray){
+			if(!(addedDomains.includes(cookieArray[i].domain)) &&
+			 !(whiteListArray.includes(cookieArray[i].domain))){
+				//checkbox
+				//var cookieURL = chrome.runtime.getURL(cookieArray[i].domain);
+				var ele = document.createElement("input");
+				ele.setAttribute('type','checkbox');
+				ele.setAttribute('id',cookieArray[i].domain);
+				ele.setAttribute('name',cookieArray[i].domain);
+				ele.setAttribute('value',(cookieArray[i].secure ? "s" : ""));//http or https
 
-			//checkbox
-			var cookieURL = chrome.runtime.getURL(cookieArray[i].domain);
-			var ele = document.createElement("input");
-			ele.setAttribute('type','checkbox');
-			ele.setAttribute('id',cookieArray[i].domain + "_num:"+i);
-			ele.setAttribute('value',cookieURL);
+				//label
+				var label = document.createElement("label");
+				label.setAttribute('for',cookieArray[i].domain);//finds cookie based on ID^
+				label.setAttribute('id',cookieArray[i].domain + "label");
+				label.appendChild(document.createTextNode(cookieArray[i].domain));//display the domain
 
-			//label
-			var label = document.createElement("label");
-			label.setAttribute('for',cookieArray[i].domain + "_num:"+i);//finds cookie based on ID^
-			label.appendChild(document.createTextNode(cookieArray[i].domain));//display the domain
+				//linebreak
+				var span = document.createElement("span");
+				span.setAttribute('id',cookieArray[i].domain + 'span');
+				var lineBreak = document.createElement("br");
+				span.appendChild(lineBreak);
 
-			//linebreak
-			var lineBreak = document.createElement("br");
+				list.appendChild(ele);
+				list.appendChild(label);
+				list.appendChild(span);
 
-			document.getElementById("presentCookieCheckList").appendChild(ele);
-			document.getElementById("presentCookieCheckList").appendChild(label);
-			document.getElementById("presentCookieCheckList").appendChild(lineBreak);
+				addedDomains.push(cookieArray[i].domain);
+			}
 		}
 	});
 }
-getAllCookies();
+activeCookieList();
 
+/***********************Refresh******************************/
 
+function refreshCookieList(){
+	var list = document.getElementById("presentCookieCheckList");
+	var checkBoxes = document.getElementById('cookieForm');
 
+	for(var i = 0; i < checkBoxes.length; i++){
+		var label = document.getElementById(checkBoxes.elements[i].id + "label");
+		var span = document.getElementById(checkBoxes.elements[i].id + "span");
+		var index = addedDomains.indexOf(checkBoxes.elements[i].name);/*domain*/
+		label.parentNode.removeChild(label);
+		span.parentNode.removeChild(span);
+		list.removeChild(checkBoxes.elements[i]);
+		//list.removeChild(label);
+		if(index != -1){
+			console.log("before:" + addedDomains);
+			addedDomains.splice(index, 1);
+			console.log("after:" + addedDomains);
+		}
+
+	}
+	activeCookieList();
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+	var button5 = document.getElementById('refreshCookieList');
+	if(button5){//probably unnesecary 
+		button5.addEventListener('click', refreshCookieList)
+	}
+});
+/***********************************************************/
 
 /**********************white list handlers *******************************/
 var whiteListArray = [];
 function buildWhiteList(){
-	var selectedCookies = document.getElementById('cookieForm');
-	for(var i = 0; i < selectedCookies.length; i++){
-		var ele = document.getElementById(selectedCookies.elements[i].id);
-		if(ele.checked){
-			whiteListArray[i] = ele.value;
+	var checkBoxes = document.getElementById('cookieForm');
+	for(var i = 0; i < checkBoxes.length; i++){
+		var check = document.getElementById(checkBoxes.elements[i].id);
+		if(check.checked && !(whiteListArray.includes(check.name))){
+			whiteListArray.push(check.name);//domain
+			console.log("http" + check.value + "://" /*+"*"*/+ check.name + "/" +"*");
+			chrome.contentSettings.cookies.set({primaryPattern: 
+				"http" + check.value + "://" /*+"*"*/+ check.name + "/" + "*", 
+				setting: 'allow'});
+
 		}
 	}
+	activeCookieList();
 	console.log(whiteListArray);
-
 	/*At this point in execution, I now have a white list containing the URLS
 	of any cookie that the user does not want destroyed*/
+	// for(var x = 0; x < whiteListArray.length; x++){
+	// 	whiteListArray.pop();
+	// }
 }
 
 document.addEventListener('DOMContentLoaded', function(){
@@ -99,19 +156,12 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 /*******************************************************/
 
-
-
-/*blow code block removes all cookies on a timer. It is no longer nessecary*/
-/****************destroy handlers*************************************
-function resumeDestroy(){
-	destroy();
-	function destroy(){
-		console.log("in destroy");
-		chrome.cookies.getAll({}, function(cookies){
+/*******************************************************/
+function deleteCookies(){
+	chrome.cookies.getAll({}, function(cookies){
 		for(var c in cookies){
-			var arrayURL = chrome.runtime.getURL(cookies[c].domain);
-			console.log(cookies[c].domain);
-			if(!(whiteListArray.includes(arrayURL))){
+			//console.log(cookies[c].domain);
+			if(!(whiteListArray.includes(cookies[c].domain))){
 				var fullURL = "http" + (cookies[c].secure ? "s" : "") + "://" + 
 					cookies[c].domain + cookies[c].path;
 
@@ -120,18 +170,20 @@ function resumeDestroy(){
 				console.log("Removed: " + arrayURL);
 			}
 		}
-		});
-	}
-	destructionVar = setInterval(destroy, 15 * 1000);//15 second timer
+	});
+	//getAllCookies();//this call updates the list
+	//destructionVar = setInterval(destroy, 15 * 1000);//15 second timer
 }
 
 
 document.addEventListener('DOMContentLoaded', function(){
-	var button0 = document.getElementById('destroy');
+	var button0 = document.getElementById('deleteCookies');
 	if(button0){//probably unnesecary 
-		button0.addEventListener('click', resumeDestroy)
+		button0.addEventListener('click', deleteCookies)
 	}
 });
+
+
 /******************************************************/
 
 
