@@ -49,9 +49,13 @@ function activeCookieList(){
 				var lineBreak = document.createElement("br");
 				span.appendChild(lineBreak);
 
-				list.appendChild(ele);
-				list.appendChild(label);
+				// list.appendChild(ele);
+				// list.appendChild(label);
+				// list.appendChild(span);
+				////////////////////////
 				list.appendChild(span);
+				span.appendChild(ele);
+				span.appendChild(label);
 
 				addedDomains.push(cookieArray[i].domain);
 			}
@@ -66,22 +70,23 @@ function refreshCookieList(){
 	var list = document.getElementById("presentCookieCheckList");
 	var checkBoxes = document.getElementById('cookieForm');
 
-	for(var i = 0; i < checkBoxes.length; i++){
-		var label = document.getElementById(checkBoxes.elements[i].id + "label");
+	console.log("length:"+ checkBoxes.elements.length);
+	for(var i = 0; i < checkBoxes.elements.length; i++){
+		//var label = document.getElementById(checkBoxes.elements[i].id + "label");
 		var span = document.getElementById(checkBoxes.elements[i].id + "span");
-		var index = addedDomains.indexOf(checkBoxes.elements[i].name);/*domain*/
-		label.parentNode.removeChild(label);
+		var domain = document.getElementById(checkBoxes.elements[i].name);/*domain*/
+		//var checkBox = document.getElementById(checkBoxes.element[i].id);
+		//console.log("removing this box: "+domain.id);
+		//label.parentNode.removeChild(label);
 		span.parentNode.removeChild(span);
-		list.removeChild(checkBoxes.elements[i]);
+		//list.removeChild(checkBox);
 		//list.removeChild(label);
-		if(index != -1){
-			console.log("before:" + addedDomains);
-			addedDomains.splice(index, 1);
-			console.log("after:" + addedDomains);
-		}
+		//console.log("addedDomains before:" + addedDomains);
+		addedDomains.splice(addedDomains.indexOf(domain), 1);
+		//console.log("addedDomains after:" + addedDomains);
 
 	}
-	activeCookieList();
+	//activeCookieList();
 }
 
 document.addEventListener('DOMContentLoaded', function(){
